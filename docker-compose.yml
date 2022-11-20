@@ -104,7 +104,7 @@ services:
         build:
             args:
                 user: wesllycode
-                uid: 1000
+                uid: 100
             context: ./
             dockerfile: Dockerfile
         restart: unless-stopped
