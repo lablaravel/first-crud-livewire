@@ -93,7 +93,7 @@ services:
 
     # redis
     redis:
-      container_name: livewire-redis
+      container_name: redis
       image: redis:latest
       networks:
         - livewire-crud
