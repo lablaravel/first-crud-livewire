@@ -1,0 +1,135 @@
+version: "3"
+services:
+    # project
+    app:
+        container_name: livewire-app
+        build:
+            args:
+                user: wesllycode
+                uid: 1000
+            context: ./
+            dockerfile: Dockerfile
+        image: app
+        restart: always
+        working_dir: /var/www/
+        volumes:
+            - ./app/:/var/www
+        environment:
+            - APP_NAME=livewire-crud
+            - DB_DATABASE=laravel
+            - DB_PASSWORD=root
+            - DB_USERNAME=root
+            - DB_HOST=mysql
+            - REDIS_HOST=redis
+            - CACHE_DRIVER=redis
+            - QUEUE_CONNECTION=redis
+            - SESSION_DRIVER=redis
+            - REDIS_PASSWORD=null
+            - REDIS_PORT=6379
+            - MAIL_MAILER=smtp
+            - MAIL_HOST=mailhog
+            - MAIL_PORT=1025
+            - MAIL_USERNAME=null
+            - MAIL_PASSWORD=null
+            - MAIL_ENCRYPTION=null
+            - MAIL_FROM_ADDRES=my-email@example.com
+            - MAIL_FROM_NAME=livewire-crud
+        networks:
+            - livewire-crud
+        depends_on:
+            - mysql
+            - redis
+
+    # nginx
+    nginx:
+        container_name: livewire-nginx
+        image: nginx:alpine
+        restart: unless-stopped
+        ports:
+            - 8180:80
+        volumes:
+            - ./app/:/var/www
+            - ./docker/nginx/:/etc/nginx/conf.d/
+        networks:
+            - livewire-crud
+        depends_on:
+            - app
+
+    # db mysql
+    mysql:
+        container_name: livewire-mysql
+        image: mysql:5.7.22
+        restart: always
+        tty: true
+        environment:
+            MYSQL_DATABASE: laravel
+            MYSQL_ROOT_PASSWORD: root
+            MYSQL_PASSWORD: root
+            MYSQL_USER: root
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
+        volumes:
+            - ./docker/mysql/dbdata:/var/lib/mysql
+        ports:
+            - 3388:3306
+        networks:
+            - livewire-crud
+
+    #PHPMYADMIN  Service
+    phpmyadmin:
+      container_name: livewire-phpmyadmin
+      image: phpmyadmin/phpmyadmin:latest
+      environment:
+        - PMA_HOST=mysql
+        - PMA_USER=root
+        - PMA_PASSWORD=root
+      restart: always
+      ports:
+        - 8181:80
+      networks:
+          - livewire-crud
+      depends_on:
+        - mysql
+
+    # redis
+    redis:
+      container_name: livewire-redis
+      image: redis:latest
+      networks:
+        - livewire-crud
+
+    # queue
+    queue:
+        container_name: livewire-queue
+        build:
+            args:
+                user: wesllycode
+                uid: 1000
+            context: ./
+            dockerfile: Dockerfile
+        restart: unless-stopped
+        command: "php artisan queue:work"
+        volumes:
+            - ./app/:/var/www
+        depends_on:
+            - redis
+            - app
+            - nginx
+        networks:
+            - livewire-crud
+
+    # Servidor de E-mail
+    mailhog:
+        container_name: livewire-mailhog
+        image: mailhog/mailhog:latest
+        ports:
+            - "8003:1025"
+            - "8100:8025"
+        depends_on:
+            - app
+        networks:
+            - livewire-crud
+
+networks:
+    livewire-crud:
+        driver: bridge
