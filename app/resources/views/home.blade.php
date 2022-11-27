@@ -15,8 +15,21 @@
         </div>
     </nav>
 
+    <div class="container">
+        <div class="row justify-content-center mt-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header text-center">
+                        <h2>Laravel 9 - Livewire CRUD</h2>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row justify-content-center mt-3">
+            @livewire('post')
+        </div>
+    </div>
 
-
-
+@livewireScripts
 </body>
 </html>
