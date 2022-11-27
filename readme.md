@@ -6,6 +6,7 @@
 
 # SOBRE O PROJETO
 - Fazendo um CRUD com livewire
+- [Link do Vídeo do Curso](https://www.youtube.com/watch?v=I6baNznXtXU)
 
 # ESTRUTURA
  * [Laravel](https://laravel.com)
@@ -186,4 +187,4 @@ Para remover uma imagem especifica a força
 ```sh
 docker rmi -f aqui_voce_digita_codigo_da_imagem
 ```
-- **Observação:** Não precisa digitar o código todo,  os 3 primeiros caracteres do código já serve.
+- **Observação:** Não precisa digitar o código todo, os 3 primeiros caracteres do código já serve.
